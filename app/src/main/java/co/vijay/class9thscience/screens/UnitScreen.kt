@@ -9,11 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun UnitList(modifier: Modifier = Modifier, itemClicked: (unitNumber : Int) -> Unit) {
+fun UnitList(itemClicked:  (unitNumber : Int) -> Unit) {
     val dataList = listOf(
         ItemsData(1,"Matter – Its Nature and Behaviour", 23),
         ItemsData(2,"Organization in the Living World", 20),
@@ -32,7 +31,9 @@ fun UnitList(modifier: Modifier = Modifier, itemClicked: (unitNumber : Int) -> U
 
 @Composable
 fun UnitItem( unitNumber: Int, unitName: String, unitMarks: Int, itemClicked : (unitNumber: Int) -> Unit) {
-    Column(modifier = Modifier.padding(0.dp, 8.dp).clickable { itemClicked(unitNumber) }) {
+    Column(modifier = Modifier
+        .padding(0.dp, 8.dp)
+        .clickable { itemClicked(unitNumber) }) {
         Text(text = "Unit : $unitNumber (Marks : $unitMarks)",  style =  MaterialTheme.typography.titleLarge)
         Text(text = unitName, style = MaterialTheme.typography.bodyLarge)
     }

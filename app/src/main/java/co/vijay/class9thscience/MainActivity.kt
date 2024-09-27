@@ -1,7 +1,6 @@
 package co.vijay.class9thscience
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,10 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import co.vijay.class9thscience.screens.UnitList
+import co.vijay.class9thscience.screens.SingleNoteScreen
 import co.vijay.class9thscience.ui.theme.Class9thScienceTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,12 +33,17 @@ class MainActivity : ComponentActivity() {
 fun App( modifier: Modifier = Modifier) {
     Box(modifier = modifier.padding(18.dp,0.dp)){
         val c = LocalContext.current
-        UnitList{
-            Toast.makeText(c, it.toString(), Toast.LENGTH_SHORT).show()
-        }
+        SingleNoteScreen()
+//        UnitList{
+//
+//            Toast.makeText(c, it.toString(), Toast.LENGTH_SHORT).show()
+//        }
+
     }
 
+
 }
+
 
 
 
