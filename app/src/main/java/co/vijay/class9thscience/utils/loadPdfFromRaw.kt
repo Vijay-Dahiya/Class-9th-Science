@@ -15,10 +15,8 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.max
-import kotlin.math.min
 
-fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int) {
+fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int, scrollView: ScrollView) {
     // Load the PDF from raw folder into cache
     val inputStream = context.resources.openRawResource(rawResId)
     val file = File(context.cacheDir, "temp_pdf.pdf")
@@ -46,6 +44,12 @@ fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int) {
 
         pdfLayout.addView(imageView)
         page.close()
+    }
+
+    // Force layout re-calculation after adding all pages
+    scrollView.post {
+        scrollView.requestLayout()
+        scrollView.invalidate()
     }
 
     // Close renderer after use

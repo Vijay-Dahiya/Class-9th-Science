@@ -1,5 +1,6 @@
 package co.vijay.class9thscience.screens
 
+import ProperMeasuredScrollView
 import ZoomableScrollView
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -51,15 +52,15 @@ fun PdfViewerFromRawWithZoomAndScroll() {
                 orientation = LinearLayout.VERTICAL
             }
 
-            // Wrap the PDF layout inside a ZoomableScrollView for zoom and scroll
-            val zoomableScrollView = ZoomableScrollView(context).apply {
+            // Create a ProperMeasuredScrollView to wrap around the LinearLayout
+            val scrollView = ProperMeasuredScrollView(context).apply {
                 addView(pdfLayout)
             }
 
             // Load and display the PDF
-            loadPdfFromRaw(context, pdfLayout, R.raw.unit3) // Replace with your PDF resource
+            loadPdfFromRaw(context, pdfLayout, R.raw.unit3, scrollView) // Replace with your PDF resource
 
-            zoomableScrollView
+            scrollView
         }
     )
 }
