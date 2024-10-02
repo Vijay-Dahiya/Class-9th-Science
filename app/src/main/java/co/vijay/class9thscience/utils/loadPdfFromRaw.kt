@@ -17,7 +17,6 @@ import java.io.File
 import java.io.FileOutputStream
 
 fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int, scrollView: ScrollView) {
-    // Load the PDF from raw folder into cache
     val inputStream = context.resources.openRawResource(rawResId)
     val file = File(context.cacheDir, "temp_pdf.pdf")
     val outputStream = FileOutputStream(file)
@@ -25,19 +24,16 @@ fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int, scr
     inputStream.close()
     outputStream.close()
 
-    // Open the PDF file using PdfRenderer
     val fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
     val pdfRenderer = PdfRenderer(fileDescriptor)
 
-    // Render all pages
     for (i in 0 until pdfRenderer.pageCount) {
         val page = pdfRenderer.openPage(i)
-        val width = page.width * 2 // Adjust this for better resolution
+        val width = page.width * 2
         val height = page.height * 2
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
-        // Add each page as an ImageView
         val imageView = ImageView(context)
         imageView.setImageBitmap(bitmap)
         imageView.adjustViewBounds = true
@@ -52,6 +48,5 @@ fun loadPdfFromRaw(context: Context, pdfLayout: LinearLayout, rawResId: Int, scr
         scrollView.invalidate()
     }
 
-    // Close renderer after use
     pdfRenderer.close()
 }
