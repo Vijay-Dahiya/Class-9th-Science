@@ -19,16 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import java.io.File
 import java.io.FileOutputStream
 
 @Composable
-fun PdfViewerWithZoomAndDoubleTap() {
+fun PdfViewerWithZoomAndScrollFixed() {
     val context = LocalContext.current
     var pdfPages by remember { mutableStateOf(listOf<Bitmap>()) }
 
-    // Step 1: Load the PDF pages into a Bitmap list using PdfRenderer
+    // Step 1: Load PDF pages into a Bitmap list using PdfRenderer
     LaunchedEffect(Unit) {
         val inputStream = context.resources.openRawResource(R.raw.unit3) // Replace with your PDF resource
         val file = File(context.cacheDir, "temp_pdf.pdf")
@@ -59,17 +61,26 @@ fun PdfViewerWithZoomAndDoubleTap() {
     var scale by remember { mutableStateOf(1f) }
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
 
     // Box for handling pinch-to-zoom, double-tap zoom, and panning
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .onGloballyPositioned { coordinates ->
+                size = coordinates.size  // Capture the size of the image for boundary calculations
+            }
             .pointerInput(Unit) {
                 detectTransformGestures(
                     onGesture = { _, pan, zoom, _ ->
                         scale = (scale * zoom).coerceIn(1f, 3f)  // Constrain zoom between 1x and 3x
-                        offsetX += pan.x
-                        offsetY += pan.y
+
+                        // Limit panning to prevent white space from appearing
+                        val maxX = (size.width * (scale - 1)) / 2
+                        val maxY = (size.height * (scale - 1)) / 2
+
+                        offsetX = (offsetX + pan.x).coerceIn(-maxX, maxX)
+                        offsetY = (offsetY + pan.y).coerceIn(-maxY, maxY)
                     }
                 )
             }
@@ -109,8 +120,7 @@ fun PdfViewerWithZoomAndDoubleTap() {
         }
     }
 }
-
 @Composable
 fun SingleNoteScreen() {
-    PdfViewerWithZoomAndDoubleTap()
+    PdfViewerWithZoomAndScrollFixed()
 }
