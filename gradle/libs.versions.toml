@@ -13,6 +13,7 @@ kotlinxCoroutines = "1.7.3"
 okhttpLogging = "4.11.0"
 hiltNavigation = "1.0.0"
 lifecycleViewModel = "2.6.1"
+coilCompose = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,9 @@ androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "l
 # Navigation dependencies
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
+
+# CoilCompose
+coil-compose = {module = "io.coil-kt:coil-compos", version.ref = "coilCompose"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -6,7 +6,7 @@ import android.os.ParcelFileDescriptor
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import co.vijay.class9thscience.R
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
@@ -16,23 +16,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import java.io.File
 import java.io.FileOutputStream
 
 @Composable
-fun PdfViewerWithZoomAndScrollFixed() {
+fun OpenPdf(r : Int) {
     val context = LocalContext.current
     var pdfPages by remember { mutableStateOf(listOf<Bitmap>()) }
 
     // Step 1: Load PDF pages into a Bitmap list using PdfRenderer
     LaunchedEffect(Unit) {
-        val inputStream = context.resources.openRawResource(R.raw.unit3) // Replace with your PDF resource
+        val inputStream = context.resources.openRawResource(r) // Replace with your PDF resource
         val file = File(context.cacheDir, "temp_pdf.pdf")
         val outputStream = FileOutputStream(file)
         inputStream.copyTo(outputStream)
@@ -109,18 +111,40 @@ fun PdfViewerWithZoomAndScrollFixed() {
             modifier = Modifier.fillMaxSize()
         ) {
             items(pdfPages) { pageBitmap ->
-                Image(
-                    bitmap = pageBitmap.asImageBitmap(),
+                AsyncImage(
+                    model = pageBitmap,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)  // Add padding between pages to avoid overlap
+                        .border(2.dp, shape =  RectangleShape, color = Color.Yellow)
                 )
             }
         }
     }
 }
 @Composable
-fun SingleNoteScreen() {
-    PdfViewerWithZoomAndScrollFixed()
+fun SingleNoteScreen(index : Int) {
+    when(index) {
+        0 -> {
+
+        }
+
+        1 -> {
+
+        }
+
+        2 -> {
+
+        }
+
+        3 -> {
+            OpenPdf(R.raw.unit3)
+        }
+
+        4 -> {
+
+        }
+    }
+
 }
