@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import co.vijay.class9thscience.ui.theme.LightGreen
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun UnitList(itemClicked:  (unitNumber : Int) -> Unit) {
@@ -55,35 +56,37 @@ fun UnitItem( unitNumber: Int, unitName: String, unitMarks: Int, itemClicked : (
         modifier = Modifier
             .clickable { itemClicked(unitNumber) }
             .fillMaxWidth()
-            .padding(8.dp),  // Adds padding around each card to separate them better
-        elevation = CardDefaults.cardElevation(16.dp), // Increased elevation for more depth
-        shape = RoundedCornerShape(16.dp) // Softer, more rounded corners
+            .padding(horizontal = 8.dp, vertical = 8.dp), // Horizontal and vertical padding for balance
+        elevation = CardDefaults.cardElevation(12.dp), // Softer elevation for subtler depth
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFF5F5F5)) // Slightly darker card background
-                .padding(16.dp) // Adjusted padding inside the card for a cleaner layout
+                .background(Color(0xFFF0F4FF)) // Slightly darker, more neutral background for the card
+                .padding(16.dp) // More balanced padding inside the card
         ) {
             Text(
                 text = "Unit: $unitNumber",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = Color(0xFF3F51B5), // Stronger color for the title text
+                color = Color(0xFF304FFE), // A stronger blue for contrast
             )
-            Spacer(modifier = Modifier.height(4.dp)) // Spacing between the unit number and name
-
+            Spacer(modifier = Modifier.height(4.dp)) // Adjust spacing between elements
             Text(
                 text = unitName,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFF212121), // Darker color for unit names for better contrast
-                modifier = Modifier.padding(bottom = 4.dp)
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    lineHeight = 24.sp // Slightly more space between lines for readability
+                ),
+                color = Color(0xFF212121), // Darker color for unit name
             )
+            Spacer(modifier = Modifier.height(6.dp)) // Extra space between unit name and marks text
             Text(
                 text = "Marks: $unitMarks",
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.Gray
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Normal
                 )
             )
         }
