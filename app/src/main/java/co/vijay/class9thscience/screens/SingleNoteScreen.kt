@@ -3,9 +3,7 @@ package co.vijay.class9thscience.screens
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import co.vijay.class9thscience.R
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -15,26 +13,49 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import co.vijay.class9thscience.R
 import coil.compose.AsyncImage
 import java.io.File
 import java.io.FileOutputStream
 
 @Composable
-fun OpenPdf(r : Int) {
+fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: List<Bitmap>) -> Unit) {
     val context = LocalContext.current
     var pdfPages by remember { mutableStateOf(listOf<Bitmap>()) }
+    var isLoading by remember { mutableStateOf(true) }
+    val listState = rememberLazyListState() // Track the scroll state
+    var showBackButton by remember { mutableStateOf(true) } // Control visibility of back button
+    val coroutineScope = rememberCoroutineScope() // Coroutine scope to scroll
 
-    // Step 1: Load PDF pages into a Bitmap list using PdfRenderer
+    // Load PDF pages in a background effect
     LaunchedEffect(Unit) {
-        val inputStream = context.resources.openRawResource(r) // Replace with your PDF resource
+        val inputStream = context.resources.openRawResource(rawId)
         val file = File(context.cacheDir, "temp_pdf.pdf")
         val outputStream = FileOutputStream(file)
         inputStream.copyTo(outputStream)
@@ -57,6 +78,7 @@ fun OpenPdf(r : Int) {
         pdfRenderer.close()
         fileDescriptor.close()
         pdfPages = pages
+        isLoading = false
     }
 
     // State for managing zoom and pan
@@ -64,6 +86,17 @@ fun OpenPdf(r : Int) {
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
     var size by remember { mutableStateOf(IntSize.Zero) }
+
+
+    // Observe scroll state changes and toggle button visibility
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset }
+            .collect { scrollOffset ->
+                // Adjust the threshold to 10% of the height of the first visible item
+                val threshold = size.height * 0.01f // 10% of the screen height
+                showBackButton = scrollOffset <= threshold // Show only if the top 10% is visible
+            }
+    }
 
     // Box for handling pinch-to-zoom, double-tap zoom, and panning
     Box(
@@ -83,6 +116,7 @@ fun OpenPdf(r : Int) {
 
                         offsetX = (offsetX + pan.x).coerceIn(-maxX, maxX)
                         offsetY = (offsetY + pan.y).coerceIn(-maxY, maxY)
+                        showBackButton = false
                     }
                 )
             }
@@ -96,6 +130,7 @@ fun OpenPdf(r : Int) {
                         } else {
                             scale = 2f  // Double-tap zooms in to 2x
                         }
+                        showBackButton = false
                     }
                 )
             }
@@ -108,7 +143,8 @@ fun OpenPdf(r : Int) {
     ) {
         // Display the PDF pages in a scrollable LazyColumn
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            state = listState
         ) {
             items(pdfPages) { pageBitmap ->
                 AsyncImage(
@@ -117,15 +153,48 @@ fun OpenPdf(r : Int) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)  // Add padding between pages to avoid overlap
-                        .border(2.dp, shape =  RectangleShape, color = Color.Yellow)
+                        .border(2.dp, shape = RectangleShape, color = Color.Yellow)
                 )
             }
         }
     }
+    if (showBackButton) {
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            FloatingActionButton(
+                onClick = onBackClick,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .background(color = Color.Transparent, shape = CircleShape)
+                    .align(Alignment.TopStart) // Top start corner for the back button
+                    .padding(16.dp) // Add some padding for better placement
+            ) {
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
+            }
+
+            FloatingActionButton(
+                onClick = { onDownloadClick(pdfPages) },
+                contentColor = Color.White,
+                shape = CircleShape,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd) // Top end corner for the download button
+                    .padding(16.dp) // Add some padding for better placement
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Outlined.ArrowBack,
+                    modifier = Modifier.rotate(270f),
+                    contentDescription = "Download"
+                )
+            }
+        }
+    }
+
+
 }
+
 @Composable
-fun SingleNoteScreen(index : Int) {
-    when(index) {
+fun SingleNoteScreen(index: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: List<Bitmap>) -> Unit) {
+    when (index) {
         0 -> {
 
         }
@@ -139,7 +208,7 @@ fun SingleNoteScreen(index : Int) {
         }
 
         3 -> {
-            OpenPdf(R.raw.unit3)
+            OpenPdf(R.raw.unit3, onBackClick, onDownloadClick)
         }
 
         4 -> {
