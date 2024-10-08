@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-//    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.dagger.hilt.android)
     kotlin("kapt")
 }
 
@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("com.google.android.gms:play-services-ads:23.4.0")
 
 //    implementation(libs.coil.compose)
 }

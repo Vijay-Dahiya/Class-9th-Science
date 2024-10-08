@@ -200,11 +200,11 @@ fun SingleNoteScreen(index: Int, onBackClick: () -> Unit, onDownloadClick: (pdfP
         }
 
         1 -> {
-
+            OpenPdf(R.raw.unit1, onBackClick, onDownloadClick)
         }
 
         2 -> {
-
+            OpenPdf(R.raw.unit2, onBackClick, onDownloadClick)
         }
 
         3 -> {
@@ -212,7 +212,11 @@ fun SingleNoteScreen(index: Int, onBackClick: () -> Unit, onDownloadClick: (pdfP
         }
 
         4 -> {
+            OpenPdf(R.raw.unit4, onBackClick, onDownloadClick)
+        }
 
+        5 -> {
+            OpenPdf(R.raw.unit5, onBackClick, onDownloadClick)
         }
     }
 

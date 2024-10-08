@@ -1,5 +1,6 @@
 package co.vijay.class9thscience
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
@@ -26,10 +27,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import co.vijay.class9thscience.adCenter.showInterstitialAd
 import co.vijay.class9thscience.screens.SingleNoteScreen
 import co.vijay.class9thscience.screens.UnitList
 import co.vijay.class9thscience.ui.theme.Class9thScienceTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 
@@ -44,7 +48,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private var pdfData : List<Bitmap>? = null
+    private var pdfData: List<Bitmap>? = null
 
     private fun downloadPdf(pdfPages: List<Bitmap>) {
         pdfData = pdfPages
@@ -56,7 +60,9 @@ class MainActivity : ComponentActivity() {
             val pdfDocument = PdfDocument()
             try {
                 for ((index, bitmap) in bitmaps.withIndex()) {
-                    val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, index + 1).create()
+                    val pageInfo =
+                        PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, index + 1)
+                            .create()
                     val page = pdfDocument.startPage(pageInfo)
                     page.canvas.drawBitmap(bitmap, 0f, 0f, null)
                     pdfDocument.finishPage(page)
@@ -91,43 +97,53 @@ class MainActivity : ComponentActivity() {
         setContent {
             Class9thScienceTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    App(modifier = Modifier
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFFB8D2E6),  // Light blue
-                                    Color(0xFFD5BED8)   // Light purple
+                    App(
+                        modifier = Modifier
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFFB8D2E6),  // Light blue
+                                        Color(0xFFD5BED8)   // Light purple
+                                    )
                                 )
                             )
-                        )
-                        .padding(innerPadding)
-                        .fillMaxSize() , downloadPdf = ::downloadPdf
+                            .padding(innerPadding)
+                            .fillMaxSize(), downloadPdf = ::downloadPdf
                     )
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            showInterstitialAd(this@MainActivity)
+            delay(10000)
         }
     }
 }
 
 @Composable
 fun App(modifier: Modifier = Modifier, downloadPdf: (pdfPages: List<Bitmap>) -> Unit) {
-    Box(modifier = modifier.padding(18.dp,0.dp)){
+    Box(modifier = modifier.padding(18.dp, 0.dp)) {
         val c = LocalContext.current
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "home") {
-            composable("home"){
+            composable("home") {
                 UnitList {
                     navController.navigate("pdf_screen/${it}")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        showInterstitialAd(c as Activity)
+                    }
                 }
             }
 
-            composable("pdf_screen/{unitNumber}", arguments =  listOf(
+            composable("pdf_screen/{unitNumber}", arguments = listOf(
                 navArgument("unitNumber") {
                     type = NavType.IntType
                 }
             )) {
                 val a = it.arguments!!.getInt("unitNumber")
-                SingleNoteScreen(index = a,
+                SingleNoteScreen(
+                    index = a,
                     { navController.popBackStack() },
                     downloadPdf
                 )
