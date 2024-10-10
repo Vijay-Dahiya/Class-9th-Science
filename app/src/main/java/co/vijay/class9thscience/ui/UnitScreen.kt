@@ -1,4 +1,4 @@
-package co.vijay.class9thscience.screens
+package co.vijay.class9thscience.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

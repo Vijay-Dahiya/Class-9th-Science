@@ -1,4 +1,4 @@
-package co.vijay.class9thscience.screens
+package co.vijay.class9thscience.ui
 
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
@@ -25,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -49,11 +48,9 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
     val context = LocalContext.current
     var pdfPages by remember { mutableStateOf(listOf<Bitmap>()) }
     var isLoading by remember { mutableStateOf(true) }
-    val listState = rememberLazyListState() // Track the scroll state
-    var showBackButton by remember { mutableStateOf(true) } // Control visibility of back button
-    val coroutineScope = rememberCoroutineScope() // Coroutine scope to scroll
+    val listState = rememberLazyListState()
+    var showBackButton by remember { mutableStateOf(true) }
 
-    // Load PDF pages in a background effect
     LaunchedEffect(Unit) {
         val inputStream = context.resources.openRawResource(rawId)
         val file = File(context.cacheDir, "temp_pdf.pdf")
@@ -81,36 +78,31 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
         isLoading = false
     }
 
-    // State for managing zoom and pan
     var scale by remember { mutableStateOf(1f) }
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
     var size by remember { mutableStateOf(IntSize.Zero) }
 
 
-    // Observe scroll state changes and toggle button visibility
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset }
             .collect { scrollOffset ->
-                // Adjust the threshold to 10% of the height of the first visible item
-                val threshold = size.height * 0.01f // 10% of the screen height
-                showBackButton = scrollOffset <= threshold // Show only if the top 10% is visible
+                val threshold = size.height * 0.01f
+                showBackButton = scrollOffset <= threshold
             }
     }
 
-    // Box for handling pinch-to-zoom, double-tap zoom, and panning
     Box(
         modifier = Modifier
             .fillMaxSize()
             .onGloballyPositioned { coordinates ->
-                size = coordinates.size  // Capture the size of the image for boundary calculations
+                size = coordinates.size
             }
             .pointerInput(Unit) {
                 detectTransformGestures(
                     onGesture = { _, pan, zoom, _ ->
-                        scale = (scale * zoom).coerceIn(1f, 3f)  // Constrain zoom between 1x and 3x
+                        scale = (scale * zoom).coerceIn(1f, 3f)
 
-                        // Limit panning to prevent white space from appearing
                         val maxX = (size.width * (scale - 1)) / 2
                         val maxY = (size.height * (scale - 1)) / 2
 
@@ -124,11 +116,11 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
                 detectTapGestures(
                     onDoubleTap = {
                         if (scale > 1f) {
-                            scale = 1f  // Double-tap zooms out if already zoomed
+                            scale = 1f
                             offsetX = 0f
                             offsetY = 0f
                         } else {
-                            scale = 2f  // Double-tap zooms in to 2x
+                            scale = 2f
                         }
                         showBackButton = false
                     }
@@ -141,7 +133,6 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
                 translationY = offsetY
             )
     ) {
-        // Display the PDF pages in a scrollable LazyColumn
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = listState
@@ -152,7 +143,7 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)  // Add padding between pages to avoid overlap
+                        .padding(8.dp)
                         .border(2.dp, shape = RectangleShape, color = Color.Yellow)
                 )
             }
@@ -166,8 +157,8 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
                 contentColor = Color.White,
                 modifier = Modifier
                     .background(color = Color.Transparent, shape = CircleShape)
-                    .align(Alignment.TopStart) // Top start corner for the back button
-                    .padding(16.dp) // Add some padding for better placement
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
                 Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
             }
@@ -177,8 +168,8 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
                 contentColor = Color.White,
                 shape = CircleShape,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd) // Top end corner for the download button
-                    .padding(16.dp) // Add some padding for better placement
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
             ) {
                 Icon(
                     Icons.AutoMirrored.Outlined.ArrowBack,
