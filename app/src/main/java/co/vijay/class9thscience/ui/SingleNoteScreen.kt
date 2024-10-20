@@ -140,7 +140,7 @@ fun OpenPdf(rawId: Int, onBackClick: () -> Unit, onDownloadClick: (pdfPages: Lis
             items(pdfPages) { pageBitmap ->
                 AsyncImage(
                     model = pageBitmap,
-                    contentDescription = null,
+                    contentDescription = "Pdf Page",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)

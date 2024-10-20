@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">Class 9th Science</string>
+
+    <string name="settings_tittle">Settings</string>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="about_us_title">About Us</string>
+    <string name="terms_of_service_title">Terms of Service</string>
+    <string name="contact_us_title">Contact Us</string>
+    <string name="ad_disclosure_title">Ad Disclosure</string>
+    <string name="email">eng.vijay1@gmail.com</string>
+
+    <!-- Screen Content -->
+    <string name="privacy_policy_content">
+        We value your privacy. Our app is designed to provide an educational experience without collecting any personal information.
+        If data is collected, it is solely to improve app functionality and enhance your user experience.
+        All data, if any, is handled responsibly and securely, in compliance with Google Play policies.
+        No data is shared with third parties without your explicit consent. For detailed information, please contact us at:
+    </string>
+
+    <string name="about_us_content">
+        Welcome to 9th Class Science Notes! Our mission is to make learning easy and accessible for students.
+        We provide clear, concise notes and study materials to help you excel in your science subjects.
+        We’re dedicated to supporting students in their academic journey and committed to educational success.
+    </string>
+
+    <string name="terms_of_service_content">
+        By using 9th Class Science Notes, you agree to abide by our terms of service, which promote responsible usage of the content.
+        Unauthorized distribution or reproduction of content is prohibited. Our app is intended for personal and educational use only.
+        For questions or concerns about these terms, feel free to contact us at:
+    </string>
+
+    <string name="contact_us_content">
+        We\'d love to hear from you! If you have questions, suggestions, or need support,
+        please email us at:
+    </string>
+
+    <string name="ad_disclosure_content">
+        Our app displays ads to support development and keep it free for users.
+        These ads may be personalized based on your general preferences, but we do not store or share any personal data.
+        For details on how ads work and to adjust your preferences, please visit our Privacy Policy page.
+    </string>
+
 </resources>
